@@ -1,0 +1,47 @@
+
+开机流程;
+    (1)引导程序: ROM-->RAM
+    (2)引导程序执行:
+        (1):检测外部 RAM ,加载对第二阶段有用的程序
+        (2):设置网络,内存等
+    (3)完成内核的系统设置
+        设置缓存、被保护存储器、计划列表，加载驱动 , 完成设置后 , 在系统文件中找 init文件,
+        然后启动root 进程或第一个进程
+
+    (4)执行 init 进程 (root进程)
+        挂载目录
+        运行 init.rc 脚本 (Android初始化语言: Actions,Commands,Services,Options)
+
+    (5)加载ZygoteInit进程
+    (6)启动系统服务
+        运行环境请求 Zygote运行系统服务(可以看做一个进程)
+        电源管理器；Activity管理器；电话注册；包管理器；设置Activity管理服务为系统进程；
+        上下文管理器；系统Context Providers；电池服务；定时管理器；传感服务；窗口管理器；
+        蓝牙服务；挂载服务 等...
+
+    (7)发送开机广播
+
+应用启动流程:
+    1、Launcher通过Binder进程间通信机制通知ActivityManagerService，它要启动一个Activity；
+    2、Launcher通过Binder进程间通信机制通知ActivityManagerService，它已经准备就绪进入Paused状态，
+        于是ActivityManagerService就创建一个新的进程，用来启动一个ActivityThread实例，
+        即将要启动的Activity就是在这个ActivityThread实例中运行；
+    3、ActivityThread通过Binder进程间通信机制将一个ApplicationThread类型的Binder对象传递给
+        ActivityManagerService，以便以后ActivityManagerService能够通过这个Binder对象和它进行通信；
+    4、ActivityManagerService通过Binder进程间通信机制通知ActivityThread，现在一切准备就绪，
+        它可以真正执行Activity的启动操作了。
+
+
+apk 打包流程
+    (1)打包资源文件 , 生成 R.java文件
+    (2)打包aidl 文件, 生成相应的 Java 文件(aidl 文件编译期间生成?)
+    (3)编译工程源码 ,生成相应的class 文件
+    (4)转换所有 class 文件生成.dex文件
+    (5)打包生成 apk(资源文件+.dex 文件)
+    (6)对生成的 apk包签名
+    (7)签名包处理  对齐处理 工具: zipalign
+        使 apk 包中的资源文件距离文件起始偏移为4的倍数, 这样通过内存映射访问 apk 的速度会更快
+
+
+
+

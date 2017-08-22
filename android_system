@@ -1,0 +1,80 @@
+
+(1)一个apk从开始安装到启动, 系统都做了哪些事情, 从AMS , WMS,PMS的角度考虑,以及进程是如何启动的?
+    PackageManagerService : 处理各种应用的安装卸载管理等工作 , 开机时由SystemService 启动
+    (SystemService 创建了 ServerThread线程,在这个线程中启动 PackageManagerService 和 ActivityManagerService.并加入 ServiceManager 中)
+    扫描系统目录，找到应用程序文件 *.Apk，并解析，得到相关信息，完成安装
+    安装:
+        date/app : apk复制到这个目录
+        dalvik-cache : dex文件(Dalvik字节码)保存在这个目录
+        data/data : 应用数据目录 , 数据库 , xml文件 , cache , so库
+    解析清单文件, 得到相关信息, 如 Activity , Service ,Broadcast Receiver和 ContentProvider等,
+    有了这些信息后, 通过ActivityManagerService服务, 就可以在系统中正常使用这些程序了
+
+
+(2)AMS和 WMS相关数据结构和通信桥梁是什么,AMS 的堆栈是如何管理的,WMS 的堆栈是如何管理的?
+
+
+(3) Android 内存管理机制 , LMK相关机制 及 AMS 进程管理机制, 分别介绍
+
+
+(4) PMS 开机相关流程 , apk 安装流程  adb install 和pms scan的区别有哪些?
+
+
+(5) broadCast的机制 , 分发的流程是什么?如何传递到每个 app进程的 , 动态广播和静态广播的处理流程有哪些不一样?
+(6) 多用户最主要的机制,及创建一个新用户系统需要做哪些事情
+(7)Runtime Permission 如何把一个预置的app 默认给他权限 , 不要授权
+(8) 如果实现预装 apk 卸载后通过恢复出厂设置恢复过啦, 介绍方案,
+(9) Android资源加载和打包机制 ,一个图片在 app 中调用R.id.是如何找到的
+(10) Android Overlay 机制是什么
+(11) Android 权限管理机制是什么
+(12) 为何android.uid.system相关下的进程不能访问sdcard
+(13) 开机流程和关机流程
+    开机扫描目录:
+    /system/framework、 /system/app、 /vendor/app、/data/app、 /data/app-private (DRM保护的 apk 文件)
+
+
+(14)bootanimation 是如何启动和退出的
+(15)Binder 的相关机制以及在 Android 平台的使用, Android还有什么 IPC通信方式, 各有什么优缺点?
+        信使通信:messenger,可以在不同进程中传递 messenger 对象,底层用到 AIDL
+(16) 死机 重启等 statbility问题分析流程 watchdog reset 如何分析?
+(17) native crash问题如何分析 以及 crash在 art相关的oat , odex文件如何分析?
+(18)Android ART机制 , 与 dalvik 的区别 , JIT 和 AOT的区别是什么? ART GC有什么改善, 还有什么缺点?
+(19) ANR OOM等问题的分析流程介绍
+(20) Android ++ 智能指针相关的使用介绍
+(21)Android 编译优化 , ART 相关编译优化
+(22) input 相关事件的分发机制,tp相关问题解决
+(23) 按键事件和 tp 事件处理有什么不同点和相同点
+(24)功耗相关问题的分析
+(25)性能相关问题的分析
+(26)Android N 与M 一些典型的改变有哪些 , Multi-window机制介绍
+(27)PowerManagerService主要做哪些相关操作,系统亮灭屏有哪些流程
+(28)wakelock机制 , Android 如何和 Linux管理这些 wakelock
+(29)Alarm相关机制 ,doze相关机制和运行方式
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

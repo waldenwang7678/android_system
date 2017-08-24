@@ -33,7 +33,8 @@
 
 
 apk 打包流程
-    (1)打包资源文件 , 生成 R.java文件
+    (1)打包资源文件 (assert,res,AndroidMenifest.xml,Android.jar), 生成 R.java文件
+        (assert文件并不会被 Android 想 res资源文件那样优化) , 生成文件: bin/resource.ap_, R.java
     (2)打包aidl 文件, 生成相应的 Java 文件(aidl 文件编译期间生成?)
     (3)编译工程源码 ,生成相应的class 文件
     (4)转换所有 class 文件生成.dex文件
@@ -41,6 +42,49 @@ apk 打包流程
     (6)对生成的 apk包签名
     (7)签名包处理  对齐处理 工具: zipalign
         使 apk 包中的资源文件距离文件起始偏移为4的倍数, 这样通过内存映射访问 apk 的速度会更快
+
+Activity 实际上有两个实体
+    在应用进程中跟用户交互的 Activity
+    在 AMS 中具有管理功能的History Record
+
+
+AMS是Android中最核心的服务，主要负责系统中四大组件的启动、切换、调度及应用进程的管理和调度等工作
+
+
+system_server
+    PackagerManagerService
+    ActivityManagerService
+    WindowsManagerService
+
+WindowsMangerService 的两个基础子系统:
+    LayoutSystem , 计算与管理窗口的位置和层次
+    AnimationSystem , 渲染窗口动画
+
+Linux/android 进程:
+       init
+          - zygote(java进程的父进程)
+                    - System Server(FrameWork 层)
+                                -AMS --|
+                                -PMS --|--->(
+                                -WMS --|
+
+
+
+
+Binder:
+    system server进程初始化的各种service 支持了整个 Android FrameWork层的 service) 大都基于 Binder
+        这些 service主要有两种:
+        java层 Framework service 作为server 端,继承或间接继承 Binder , 作为Client 端继承或间接 BinderProxy
+                ActivityManagerService作为 server 端, 间接继承Binder, AvtivityManager 作为 Client 间接继承BinderProxy  (C/S 架构)
+        native层 Framework service 作为 server 端继承或间接继承 BBinder,  Client端继承或间接继承 BpBinder类
+            MediaPlayService(server端) 继承 BBinder, MediaPlay(Client 端)间接继承 BpBinder
+
+
+
+
+
+
+
 
 
 

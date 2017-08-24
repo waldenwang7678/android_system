@@ -1,7 +1,7 @@
 
 (1)一个apk从开始安装到启动, 系统都做了哪些事情, 从AMS , WMS,PMS的角度考虑,以及进程是如何启动的?
     PackageManagerService : 处理各种应用的安装卸载管理等工作 , 开机时由SystemService 启动
-    (SystemService 创建了 ServerThread线程,在这个线程中启动 PackageManagerService 和 ActivityManagerService.并加入 ServiceManager 中)
+    (SystemServer 创建了 ServerThread线程,在这个线程中启动 PackageManagerService 和 ActivityManagerService.并加入 ServiceManager 中)
     扫描系统目录，找到应用程序文件 *.Apk，并解析，得到相关信息，完成安装
     安装:
         date/app : apk复制到这个目录
@@ -12,7 +12,9 @@
 
 
 (2)AMS和 WMS相关数据结构和通信桥梁是什么,AMS 的堆栈是如何管理的,WMS 的堆栈是如何管理的?
-
+       （1）统一调度各应用程序的Activity
+       （2）内存管理
+       （3）进程管理
 
 (3) Android 内存管理机制 , LMK相关机制 及 AMS 进程管理机制, 分别介绍
 

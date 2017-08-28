@@ -80,11 +80,12 @@ Binder:
             MediaPlayService(server端) 继承 BBinder, MediaPlay(Client 端)间接继承 BpBinder
 
 
+打包:
+    大部分文本格式的 xml 文件被编译成二进制的 xml 资源文件
 
 
-
-
-
+SystemServer通过 socket 和Zygote 通信
+从Zygote 的 main 函数可以看出， Zygote 的作用：一是 fork出 SystemServer , 然后进入循环，读取 socket 来的消息，响应 fork 新进程的请求。
 
 
 

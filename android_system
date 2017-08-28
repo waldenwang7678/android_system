@@ -1,17 +1,44 @@
 
 (1)一个apk从开始安装到启动, 系统都做了哪些事情, 从AMS , WMS,PMS的角度考虑,以及进程是如何启动的?
-    PackageManagerService : 处理各种应用的安装卸载管理等工作 , 开机时由SystemService 启动
-    (SystemServer 创建了 ServerThread线程,在这个线程中启动 PackageManagerService 和 ActivityManagerService.并加入 ServiceManager 中)
-    扫描系统目录，找到应用程序文件 *.Apk，并解析，得到相关信息，完成安装
-    安装:
-        date/app : apk复制到这个目录
-        dalvik-cache : dex文件(Dalvik字节码)保存在这个目录
-        data/data : 应用数据目录 , 数据库 , xml文件 , cache , so库
-    解析清单文件, 得到相关信息, 如 Activity , Service ,Broadcast Receiver和 ContentProvider等,
-    有了这些信息后, 通过ActivityManagerService服务, 就可以在系统中正常使用这些程序了
+     安装:
+        Zygote启动SystemServer中JNI的init() 初始化一些服务
+        在JNI的初始化中通过系统全局唯一的AndroidRuntime实例变量runtime的callStatic来调用SystemServer的init2函数
+        init2中创建一个ServerThread线程
+        ServerThread启动PackageManagerService服务和ActivityManagerService等其他服务。将这些服务加入到ServiceManager中
+        PackageManagerService扫描获得APK文件并解析安装
+            date/app : apk复制到这个目录
+            dalvik-cache : dex文件(Dalvik字节码)保存在这个目录
+            data/data : 应用数据目录 , 数据库 , xml文件 , cache , so库
+            解析AndroidManifest.xml 文件, 得到 Activity , Service ,Broadcast Receiver和 ContentProvider等信息,
+        将解析的数据存储在 packageManagerService 中
+        从 PackageManagerService 中取出图标并展示
+    启动: (两种描述方式)
+        1,Launcher通过Binder通知ActivityManagerService，它要启动一个Activity
+        2,Launcher 收到响应后后进入 Pause 状态
+        3,AMS创建一个新进程，并在新进程中启动一个ActivityThread实例，即将要启动的Activity就是在ActivityThread实例中运行
 
+        4,ActivityThread通过Binder将一个ApplicationThread类型的Binder对象传递给AMS，以便以后AMS能够通过这个Binder对象和它进行通信
+
+        5,AMS通过Binder进程间通信机制通知ActivityThread，现在一切准备就绪，它可以真正执行Activity的启动操作
+
+        1 , Launcher 接收到点击事件，获取应用的信息，向 SystemServer(内部有AMS运行) 发起启动应用的请求。
+        2、 SystemServer(AMS) 请求 Launcher Pause （Launcher 需要保存状态进入后台）
+        3、 Launcher Pause ，向 SystemServer(AMS) 发送 Pause 完毕
+
+        4、 SystemServer(AMS) 向 Zygote 请求启动一个新进程(calculator)
+        5、 Zygote fork 出新进程(calculator) , 在新进程中执行 ActivityThread 类的 main 方法
+
+        6、 calculator 向 SystemServer(AMS) 请求 attach 到 AMS
+        7、 SystemServer(AMS) 请求 calculator launch
+        8、 calculator 调用 onCreate ， onResume 回调
+        9、 calculator 界面显示自屏幕上
+
+
+
+   进程启动: zynote-System Sever->AMS,PMS,WMS
 
 (2)AMS和 WMS相关数据结构和通信桥梁是什么,AMS 的堆栈是如何管理的,WMS 的堆栈是如何管理的?
+        通信桥梁 Binder
        （1）统一调度各应用程序的Activity
        （2）内存管理
        （3）进程管理
@@ -27,8 +54,11 @@
 (7)Runtime Permission 如何把一个预置的app 默认给他权限 , 不要授权
 (8) 如果实现预装 apk 卸载后通过恢复出厂设置恢复过啦, 介绍方案,
 (9) Android资源加载和打包机制 ,一个图片在 app 中调用R.id.是如何找到的
+
 (10) Android Overlay 机制是什么
+
 (11) Android 权限管理机制是什么
+    SEAndroid
 (12) 为何android.uid.system相关下的进程不能访问sdcard
 (13) 开机流程和关机流程
     开机扫描目录:
@@ -49,9 +79,12 @@
 (24)功耗相关问题的分析
 (25)性能相关问题的分析
 (26)Android N 与M 一些典型的改变有哪些 , Multi-window机制介绍
+
 (27)PowerManagerService主要做哪些相关操作,系统亮灭屏有哪些流程
 (28)wakelock机制 , Android 如何和 Linux管理这些 wakelock
 (29)Alarm相关机制 ,doze相关机制和运行方式
+    Alarm 系统休眠后依然可用(Timer和 Handler不行)
+
 
 
 

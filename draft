@@ -88,5 +88,48 @@ SystemServer通过 socket 和Zygote 通信
 从Zygote 的 main 函数可以看出， Zygote 的作用：一是 fork出 SystemServer , 然后进入循环，读取 socket 来的消息，响应 fork 新进程的请求。
 
 
+﻿AvtivityMangerService :  (由SystemServer的ServerThread线程创建)
+        用来进行组件和应用进程的管理
+        组件管理中 Activity 管理通过 ActivityStackSuperVisor (4.4新增) 和ActivityStack来对 ActivityRecord 和 TaskRecord 管理
+        ActivityRecord最小功能模块的记录者(Activity 记录者)
+        TaskRescord 是一系列最小功能模块组成,形成一个逻辑上的应用
+        AMS通过IApplicationThread和IActivityManager以及Binder通讯，实现进程间通讯
+    ActivityStackSuperVisor:
+        mHomeStack: 只保存Launcher的 task , the stack containing the laucher task
+        mFouceStack: 其他 Task
+
+    mStackSuperVisor管理 Task
+    ActivityStack 管理 Activity
+
+    ActivityStack管理ActivityRecord 的一个栈
+
+    Activity :存储
+        当前 PauseActivity : ActivityRecord->mPausingActivities
+        上次 PauseActivity : ActivityRecord->mLastPausingActivities
+        当前显示Activity : ActivityRecord->mResumeActivities
+        ActivityStack 中的 Handler 对Activity 的生命周期回调操作进行超时处理.
+
+        ActivityStack->TaskRecord->ActivityRecord
+    TaskRecord : 存储 Task 需要的Activity , taskID , 最后被调用时间 , 引用这个Task的ActivityTask
+    ActivityRecord:
+        存储 activity 的信息 , 如 AndroidManifest.xml 中配置的activity 信息
+        与当前 ActivityRecord 相关的ProcessRecord 和 Task
+
+    AMS 结构:
+        AMS由ActivityManagerNative(AMN)类派生,实现Watchdog.Monitor和BatteryStatsImpl.BatteryCallback接口。
+        AMN由Binder派生，实现了IActivityManager接口。
+        客户端使用ActivityManager类。AMS是系统核心服务，很多API不开放，所以ActivityManager没有直接加入AMS家族
+        在ActivityManager类内部通过调用AMN的getDefault函数得到一个ActivityManagerProxy对象，通过它可与AMS通信
+
+
+
+
+
+
+
+
+
+
+
 
 

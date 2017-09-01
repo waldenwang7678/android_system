@@ -16,32 +16,30 @@
         1,Launcher通过Binder通知ActivityManagerService，它要启动一个Activity
         2,Launcher 收到响应后后进入 Pause 状态
         3,AMS创建一个新进程，并在新进程中启动一个ActivityThread实例，即将要启动的Activity就是在ActivityThread实例中运行
-
+            (下面4,5过程)
         4,ActivityThread通过Binder将一个ApplicationThread类型的Binder对象传递给AMS，以便以后AMS能够通过这个Binder对象和它进行通信
-
+            (下面6过程)
         5,AMS通过Binder进程间通信机制通知ActivityThread，现在一切准备就绪，它可以真正执行Activity的启动操作
+            (下面7,8,9流程)
 
         1 , Launcher 接收到点击事件，获取应用的信息，向 SystemServer(内部有AMS运行) 发起启动应用的请求。
         2、 SystemServer(AMS) 请求 Launcher Pause （Launcher 需要保存状态进入后台）
         3、 Launcher Pause ，向 SystemServer(AMS) 发送 Pause 完毕
-
         4、 SystemServer(AMS) 向 Zygote 请求启动一个新进程(calculator)
         5、 Zygote fork 出新进程(calculator) , 在新进程中执行 ActivityThread 类的 main 方法
-
         6、 calculator 向 SystemServer(AMS) 请求 attach 到 AMS
         7、 SystemServer(AMS) 请求 calculator launch
         8、 calculator 调用 onCreate ， onResume 回调
         9、 calculator 界面显示自屏幕上
-
+        上述流程相同,描述角度不同
 
 
    进程启动: zynote-System Sever->AMS,PMS,WMS
 
-(2)AMS和 WMS相关数据结构和通信桥梁是什么,AMS 的堆栈是如何管理的,WMS 的堆栈是如何管理的?
+(2)AMS和WMS相关数据结构和通信桥梁是什么,AMS的堆栈是如何管理的,WMS 的堆栈是如何管理的?
+
         通信桥梁 Binder
-       （1）统一调度各应用程序的Activity
-       （2）内存管理
-       （3）进程管理
+
 
 (3) Android 内存管理机制 , LMK相关机制 及 AMS 进程管理机制, 分别介绍
 
@@ -68,6 +66,8 @@
 (14)bootanimation 是如何启动和退出的
 (15)Binder 的相关机制以及在 Android 平台的使用, Android还有什么 IPC通信方式, 各有什么优缺点?
         信使通信:messenger,可以在不同进程中传递 messenger 对象,底层用到 AIDL
+
+
 (16) 死机 重启等 statbility问题分析流程 watchdog reset 如何分析?
 (17) native crash问题如何分析 以及 crash在 art相关的oat , odex文件如何分析?
 (18)Android ART机制 , 与 dalvik 的区别 , JIT 和 AOT的区别是什么? ART GC有什么改善, 还有什么缺点?
